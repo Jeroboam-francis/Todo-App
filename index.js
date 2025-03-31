@@ -10,9 +10,11 @@ const client = new PrismaClient();
 
 program.name("CLI-Todo");
 program.version("0.0.1");
-program.description("A simple CLI for managing todos");
+program.description(
+  "A simple Commmand line Interface applicattion for managing todos"
+);
 
-// Add todo command
+
 program
   .command("add-todo")
   .description("Add a new todo")
@@ -22,17 +24,17 @@ program
         {
           type: "text",
           name: "title",
-          message: "Enter the title of the todo",
+          message: "Enter the title of the todo you want to add ",
         },
         {
           type: "text",
           name: "description",
-          message: "Enter a description",
+          message: "Enter a description of your todo",
         },
         {
           type: "select",
           name: "status",
-          message: "Select the status",
+          message: "Select the status of the todo you added",
           choices: [
             { title: "todo", value: "todo" },
             { title: "in-progress", value: "in-progress" },
@@ -51,14 +53,14 @@ program
         },
       });
 
-      console.log(chalk.green("Todo created successfully!"));
+      console.log(chalk.green("Todo has been  successfully created 😊"));
     } catch (e) {
-      console.log(chalk.bgRed("Error creating todo:"));
+      console.log(chalk.bgRed("Error was encounted while creating your todo:"));
       console.log(chalk.red("Please check your input and try again."));
     }
   });
 
-// List all todos command
+
 program
   .command("list-todos")
   .description("List all todos")
@@ -68,13 +70,11 @@ program
     try {
       let todos;
       if (id) {
-        
         const todo = await client.todo.findUnique({
           where: { id: id },
         });
         todos = todo ? [todo] : [];
       } else {
-    
         todos = await client.todo.findMany();
       }
 
@@ -87,7 +87,7 @@ program
         });
         todos.forEach((todo) => {
           let statusColor;
-          switch(todo.status) {
+          switch (todo.status) {
             case "done":
               statusColor = chalk.green(todo.status);
               break;
@@ -102,12 +102,12 @@ program
         console.log(table.toString());
       }
     } catch (e) {
-      console.log(chalk.bgRed("Error fetching todos:"));
+      console.log(chalk.bgRed("Error was encountered while fetching todos:"));
       console.log(chalk.red("Please check your input and try again."));
     }
   });
 
-// Update todo command
+
 program
   .command("update-todo")
   .description("Update a todo")
@@ -115,7 +115,6 @@ program
   .action(async function (options) {
     const id = options.id;
     try {
-    
       const existingTodo = await client.todo.findUnique({
         where: { id: id },
       });
@@ -147,7 +146,12 @@ program
             { title: "in-progress", value: "in-progress" },
             { title: "done", value: "done" },
           ],
-          initial: existingTodo.status === "todo" ? 0 : existingTodo.status === "in-progress" ? 1 : 2,
+          initial:
+            existingTodo.status === "todo"
+              ? 0
+              : existingTodo.status === "in-progress"
+                ? 1
+                : 2,
         },
       ]);
 
@@ -160,14 +164,14 @@ program
         },
       });
 
-      console.log(chalk.green("Todo updated successfully!"));
+      console.log(chalk.green("Todo updated saw successfully updated 👍👍"));
     } catch (e) {
       console.log(chalk.bgRed("Error updating todo:"));
       console.log(chalk.red("Please check your input and try again."));
     }
   });
 
-// Delete a specific todo command
+
 program
   .command("delete-todo")
   .description("Delete a specific todo")
@@ -205,7 +209,7 @@ program
     }
   });
 
-// Delete all todos command
+
 program
   .command("delete-all-todos")
   .description("Delete all todos")
@@ -214,7 +218,8 @@ program
       const confirmation = await prompts({
         type: "confirm",
         name: "value",
-        message: "Are you sure you want to delete ALL todos? This cannot be undone.",
+        message:
+          "Are you sure you want to delete ALL todos? This cannot be undone.",
         initial: false,
       });
 
@@ -230,14 +235,16 @@ program
     }
   });
 
-// Help command
+
 program
   .command("help")
   .description("Show help information")
   .action(function () {
     console.log(chalk.blue("Available commands:"));
     console.log(chalk.green("add-todo") + "          - Add a new todo");
-    console.log(chalk.green("list-todos") + "        - List all todos or a specific todo");
+    console.log(
+      chalk.green("list-todos") + "        - List all todos or a specific todo"
+    );
     console.log(chalk.green("update-todo") + "       - Update a todo");
     console.log(chalk.green("delete-todo") + "       - Delete a specific todo");
     console.log(chalk.green("delete-all-todos") + "  - Delete all todos");
